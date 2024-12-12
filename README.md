@@ -70,7 +70,7 @@ public class ExemploController {
 
 ## Documentação
 
-[[Documentação](link-para-documentação)](https://github.com/CHMFC/GenCin-API/main/README.md)
+[[Documentação](https://github.com/CHMFC/GenCin-API/main/README.md)]
 
 ## Como Contribuir
 
