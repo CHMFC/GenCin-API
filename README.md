@@ -1,10 +1,9 @@
 # GenCin (SpringBoot - Java)
 
 ## Status
-[![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/github/issues/IF977/if977-project-standards.svg)](https://github.com/IF977/if977-project-standards/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/IF977/if977-project-standards.svg)](https://github.com/IF977/if977-project-standards/pulls)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
+![GitHub Issues](https://img.shields.io/github/issues/CHMFC/GenCin-APP)
+![GitHub Pull Requests](https://img.shields.io/github/issues-pr/CHMFC/GenCin-APP)
+![License](https://img.shields.io/github/license/CHMFC/GenCin-APP)
 
 ---
 
