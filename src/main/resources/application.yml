@@ -1,0 +1,27 @@
+gg:
+  jte:
+    development-mode: true
+
+spring:
+  application:
+    name: GenCin
+
+  datasource:
+    url: jdbc:postgresql://172.233.24.207:5432/gencin
+    username: lk
+    password: password_lk
+    driver-class-name: org.postgresql.Driver
+
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+
+  springdoc:
+    api-docs:
+      path: /v3/api-docs
+    swagger-ui:
+      path: /swagger-ui.html
+
+
