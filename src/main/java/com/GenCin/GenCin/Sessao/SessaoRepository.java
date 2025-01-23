@@ -55,4 +55,11 @@ public interface SessaoRepository extends JpaRepository<Sessao, UUID> {
         WHERE s.chaveSessao = :chaveSessao
     """)
     void marcarSessaoComoExpirada(@Param("chaveSessao") String chaveSessao);
+
+    @Query("""
+    SELECT s
+    FROM Sessao s
+    WHERE s.usuario.id = :idUsuario AND s.expired = false
+""")
+    Optional<Sessao> buscarSessaoValidaPorUsuario(@Param("idUsuario") UUID idUsuario);
 }
