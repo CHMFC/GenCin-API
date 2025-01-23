@@ -58,6 +58,14 @@ public class SessaoService {
      */
     public String iniciarSessao(UUID idUsuario) {
         // Gerar uma chave única para a sessão
+
+        Optional<Sessao> sessaoExistente = sessaoRepository.buscarSessaoValidaPorUsuario(idUsuario);
+
+        if (sessaoExistente.isPresent()) {
+            // Retornar a chave da sessão existente
+            expirarSessao(sessaoExistente.get().getChaveSessao());
+        }
+
         String chaveSessao = UUID.randomUUID().toString();
         UUID idSessao = UUID.randomUUID(); // Gera um ID para a sessão
 
