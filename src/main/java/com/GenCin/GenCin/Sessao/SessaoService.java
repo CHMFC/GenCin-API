@@ -36,12 +36,12 @@ public class SessaoService {
         LocalDateTime agora = LocalDateTime.now();
         Duration diferenca = Duration.between(horarioLogin, agora);
 
-        // Verifica se a sessão está dentro do limite de 24 horas
-        if (diferenca.toHours() <= 24) {
+        // Verifica se a sessão está dentro do limite de 48 horas
+        if (diferenca.toHours() <= 48) {
             return sessaoRepository.buscarIdUsuarioPorChaveSessao(chaveSessao);
         }
 
-        // Se fora do limite de 24 horas, expira a sessão
+        // Se fora do limite de 48 horas, expira a sessão
         expirarSessao(chaveSessao);
         return Optional.empty();
     }
