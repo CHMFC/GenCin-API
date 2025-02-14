@@ -1,14 +1,13 @@
-# Usar uma imagem base do OpenJDK
-FROM openjdk:17-jdk
-
-# Definir um diretório de trabalho opcional (não estritamente necessário, mas recomendado)
+# Primeiro estágio: build do projeto com Maven
+FROM maven:3.8.4-openjdk-17 AS build
 WORKDIR /app
+COPY pom.xml .
+COPY src/ /app/src/
+RUN mvn clean package -DskipTests
 
-# Copiar o arquivo .jar gerado para dentro do contêiner
-COPY target/GenCin-0.0.1-SNAPSHOT.jar app.jar
-
-# Expor a porta padrão do Spring Boot
+# Segundo estágio: imagem com Java 17
+FROM openjdk:17-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar /app/*.jar
 EXPOSE 8080
-
-# Comando de inicialização da aplicação
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+CMD ["java", "-jar", "*.jar"]
