@@ -7,7 +7,7 @@ spring:
     name: GenCin
 
   datasource:
-    url: jdbc:postgresql://172.233.24.207:5432/gencin
+    url: jdbc:postgresql://198.74.53.107:5432/gencin
     username: lk
     password: password_lk
     driver-class-name: org.postgresql.Driver
