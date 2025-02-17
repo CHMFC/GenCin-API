@@ -24,4 +24,6 @@ spring:
     swagger-ui:
       path: /swagger-ui.html
 
-
+  data:
+    rest:
+      detection-strategy=annotated:
