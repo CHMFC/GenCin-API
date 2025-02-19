@@ -24,6 +24,9 @@ public class Sessao {
     @Column(name = "chave_sessao", nullable = false, unique = true)
     private String chaveSessao;
 
+    @Column(name = "chave_token", nullable = false, unique = true)
+    private String chave_token;
+
     @Column(name = "horario_login", nullable = false)
     private LocalDateTime horarioLogin;
 

@@ -12,7 +12,6 @@ spring:
     password: password_lk
     driver-class-name: org.postgresql.Driver
 
-
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -26,4 +25,7 @@ spring:
 
   data:
     rest:
-      detection-strategy=annotated:
+      detection-strategy: annotated
+
+jwt:
+  secret: "vOujlRpK!vT4UeY$?c%5Bj8pZs6DqLfMn"

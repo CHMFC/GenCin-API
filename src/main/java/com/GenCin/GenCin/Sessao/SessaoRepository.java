@@ -19,10 +19,10 @@ public interface SessaoRepository extends JpaRepository<Sessao, UUID> {
     @Transactional
     @Modifying
     @Query(value = """
-        INSERT INTO sessao (id, id_usuario, chave_sessao, horario_login, expired)
-        VALUES (:id, :idUsuario, :chaveSessao, CURRENT_TIMESTAMP, false)
+        INSERT INTO sessao (id, id_usuario, chave_sessao, horario_login, expired, chave_token)
+        VALUES (:id, :idUsuario, :chaveSessao, CURRENT_TIMESTAMP, false, :chave_token)
     """, nativeQuery = true)
-    void registrarSessao(@Param("id") UUID id, @Param("idUsuario") UUID idUsuario, @Param("chaveSessao") String chaveSessao);
+    void registrarSessao(@Param("id") UUID id, @Param("idUsuario") UUID idUsuario, @Param("chaveSessao") String chaveSessao, @Param("chave_token") String chave_token);
 
     // Verificar se a sessão está expirada
     @Query("""
@@ -64,4 +64,6 @@ public interface SessaoRepository extends JpaRepository<Sessao, UUID> {
     WHERE s.usuario.id = :idUsuario AND s.expired = false
 """)
     Optional<Sessao> buscarSessaoValidaPorUsuario(@Param("idUsuario") UUID idUsuario);
+
+    Optional<Sessao> findByChaveSessao(String chaveSessao);
 }

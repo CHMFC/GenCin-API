@@ -104,8 +104,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
     @Transactional
     @Modifying
     @Query(value = """
-        INSERT INTO usuario (id, tipo)
-        VALUES (:id, :tipo)
+        INSERT INTO usuario (id, tipo, mailcheck)
+        VALUES (:id, :tipo,  false)
     """, nativeQuery = true)
     void inserirUsuario(@Param("id") UUID id, @Param("tipo") String tipo);
 
