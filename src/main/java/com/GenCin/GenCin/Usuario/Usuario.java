@@ -38,6 +38,9 @@ public class Usuario {
     @Schema(description = "Tipo do usuário (ex: ALUNO, PROFESSOR).", example = "ALUNO")
     private String tipo;
 
+    @Column(name = "mailcheck", nullable = false)
+    private Boolean mailcheck;
+
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, optional = true)
     @JoinColumn(name = "id_usuario", referencedColumnName = "id")
     @Schema(description = "Associação com a tabela ALUNO, se o usuário for um aluno.")

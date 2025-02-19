@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -48,7 +48,6 @@
 			<artifactId>jte-spring-boot-starter-3</artifactId>
 			<version>3.1.12</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -69,41 +68,36 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		    <!-- Dependência do Jakarta Servlet -->
+		<!-- Dependência do Jakarta Servlet -->
 		<dependency>
 			<groupId>jakarta.servlet</groupId>
 			<artifactId>jakarta.servlet-api</artifactId>
-			<version>6.0.0</version> <!-- Verifique a versão mais recente -->
+			<version>6.0.0</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<!-- Dependência do Jakarta Persistence -->
 		<dependency>
 			<groupId>jakarta.persistence</groupId>
 			<artifactId>jakarta.persistence-api</artifactId>
-			<version>3.1.0</version> <!-- Verifique a versão mais recente -->
+			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
-
-		    <!-- Springdoc OpenAPI -->
+		<!-- Springdoc OpenAPI -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.2.0</version> <!-- Verifique a última versão no Maven Repository -->
+			<version>2.2.0</version>
 		</dependency>
-
-			<!-- Spring Data JPA -->
+		<!-- Spring Data JPA -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-
 		<!-- Driver do banco de dados (exemplo: PostgreSQL) -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.6.0</version> <!-- Verifique a última versão no Maven Repository -->
+			<version>42.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mysql</groupId>
@@ -111,8 +105,73 @@
 			<version>8.3.0</version>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- API do Gmail -->
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-gmail</artifactId>
+			<version>v1-rev110-1.25.0</version>
+		</dependency>
+		<!-- Dependências para OAuth e cliente HTTP -->
+		<dependency>
+			<groupId>com.google.api-client</groupId>
+			<artifactId>google-api-client</artifactId>
+			<version>1.32.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.oauth-client</groupId>
+			<artifactId>google-oauth-client-jetty</artifactId>
+			<version>1.34.1</version>
+		</dependency>
+		<!-- Dependência para Jackson2 (necessária para o pacote com.google.api.client.json.jackson2) -->
+		<dependency>
+			<groupId>com.google.http-client</groupId>
+			<artifactId>google-http-client-jackson2</artifactId>
+			<version>1.42.3</version>
+		</dependency>
+		<!-- Biblioteca para manipulação de mensagens MIME -->
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
+
+
+
+		<!-- Spring Boot Starter Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-jose</artifactId>
+		</dependency>
+
+
+		<!-- Biblioteca JJWT para manipular tokens -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+
 
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>google-api-client-libraries</id>
+			<name>Google API Client Libraries</name>
+			<url>https://google-api-client-libraries.appspot.com/mavenrepo</url>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>
@@ -172,7 +231,5 @@
 				</excludes>
 			</resource>
 		</resources>
-
 	</build>
-
 </project>
