@@ -37,7 +37,15 @@ public class GmailServiceUtil {
                 .setAccessType("offline")
                 .build();
 
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setHost("gencin-api-dev.uk").setPort(443).build();
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+
+        // Gera a URL de autorização manualmente e imprime no console
+        String redirectUri = receiver.getRedirectUri();
+        String authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(redirectUri).build();
+        System.out.println("Abra a seguinte URL no navegador para autorizar a aplicação:");
+        System.out.println(authorizationUrl);
+
+        // Procede com o fluxo de autorização
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
