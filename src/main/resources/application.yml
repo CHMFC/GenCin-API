@@ -27,5 +27,3 @@ spring:
     rest:
       detection-strategy: annotated
 
-jwt:
-  secret: "vOujlRpK!vT4UeY$?c%5Bj8pZs6DqLfMn"
