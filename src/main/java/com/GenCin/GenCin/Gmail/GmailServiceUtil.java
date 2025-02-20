@@ -37,7 +37,7 @@ public class GmailServiceUtil {
                 .setAccessType("offline")
                 .build();
 
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setHost("gencin-api-dev.uk").setPort(443).build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
