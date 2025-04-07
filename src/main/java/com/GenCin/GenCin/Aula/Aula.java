@@ -1,10 +1,11 @@
 package com.GenCin.GenCin.Aula;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.GenCin.GenCin.Professor.Professor;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.sql.Time;
 import java.util.UUID;
 
 @Entity
@@ -26,7 +27,6 @@ public class Aula {
     @Column(name = "nome_aula", nullable = false)
     private String nomeAula;
 
-    // Armazena os dias da semana em que a aula ocorre (ex.: "SEG,TER,QUI")
     @Column(name = "dias_semana", nullable = false)
     private String diasSemana;
 
@@ -34,9 +34,12 @@ public class Aula {
     @JoinColumn(name = "id_professor", referencedColumnName = "id", nullable = false)
     private Professor professor;
 
+    // Usamos java.sql.Time e indicamos o formato "HH:mm:ss"
+    @JsonFormat(pattern = "HH:mm:ss", timezone = "UTC")
     @Column(name = "hora_inicio", nullable = false)
-    private Timestamp horaInicio;
+    private Time horaInicio;
 
+    @JsonFormat(pattern = "HH:mm:ss", timezone = "UTC")
     @Column(name = "hora_fim", nullable = false)
-    private Timestamp horaFim;
+    private Time horaFim;
 }

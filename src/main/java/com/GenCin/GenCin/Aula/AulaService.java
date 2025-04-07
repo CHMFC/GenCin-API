@@ -6,6 +6,7 @@ import com.GenCin.GenCin.Usuario.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -150,7 +151,9 @@ public class AulaService {
     }
 
     // Helper: verifica se os horários conflitam
-    private boolean horariosConflitam(Timestamp inicio1, Timestamp fim1, Timestamp inicio2, Timestamp fim2) {
+// Helper: verifica se os horários conflitam (usando java.sql.Time)
+    private boolean horariosConflitam(Time inicio1, Time fim1, Time inicio2, Time fim2) {
         return inicio1.before(fim2) && fim1.after(inicio2);
     }
+
 }
