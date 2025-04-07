@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,7 +40,8 @@ public class AulaService {
             throw new Exception("Usuário não autorizado. Somente professores podem criar aulas.");
         }
         Usuario professor = usuarioOpt.get();
-        aula.setProfessor(professor.getProfessor()); // assume que o objeto Usuario possui método getProfessor() que retorna o objeto Professor associado
+        // Define o professor da aula a partir do objeto associado ao usuário
+        aula.setProfessor(professor.getProfessor());
         return aulaRepository.save(aula);
     }
 
@@ -67,9 +67,36 @@ public class AulaService {
         // Atualiza os campos da aula
         aula.setCodAula(updatedAula.getCodAula());
         aula.setNomeAula(updatedAula.getNomeAula());
-        aula.setDiasSemana(updatedAula.getDiasSemana());
-        aula.setHoraInicio(updatedAula.getHoraInicio());
-        aula.setHoraFim(updatedAula.getHoraFim());
+
+        // Atualiza os dias e horários
+        aula.setSeg(updatedAula.isSeg());
+        aula.setHoraInicioSeg(updatedAula.getHoraInicioSeg());
+        aula.setHoraFimSeg(updatedAula.getHoraFimSeg());
+
+        aula.setTer(updatedAula.isTer());
+        aula.setHoraInicioTer(updatedAula.getHoraInicioTer());
+        aula.setHoraFimTer(updatedAula.getHoraFimTer());
+
+        aula.setQua(updatedAula.isQua());
+        aula.setHoraInicioQua(updatedAula.getHoraInicioQua());
+        aula.setHoraFimQua(updatedAula.getHoraFimQua());
+
+        aula.setQui(updatedAula.isQui());
+        aula.setHoraInicioQui(updatedAula.getHoraInicioQui());
+        aula.setHoraFimQui(updatedAula.getHoraFimQui());
+
+        aula.setSex(updatedAula.isSex());
+        aula.setHoraInicioSex(updatedAula.getHoraInicioSex());
+        aula.setHoraFimSex(updatedAula.getHoraFimSex());
+
+        aula.setSab(updatedAula.isSab());
+        aula.setHoraInicioSab(updatedAula.getHoraInicioSab());
+        aula.setHoraFimSab(updatedAula.getHoraFimSab());
+
+        aula.setDom(updatedAula.isDom());
+        aula.setHoraInicioDom(updatedAula.getHoraInicioDom());
+        aula.setHoraFimDom(updatedAula.getHoraFimDom());
+
         return aulaRepository.save(aula);
     }
 
@@ -97,14 +124,12 @@ public class AulaService {
         if (frequentaRepository.findByAlunoAndAula(aluno, aula).isPresent()) {
             throw new Exception("Aula já adicionada à agenda.");
         }
-        // Verifica conflito de horário com as aulas já adicionadas
+        // Verifica conflitos de horário entre a aula a ser adicionada e as aulas já na agenda
         List<Frequenta> aulasAgenda = frequentaRepository.findByAluno(aluno);
         for (Frequenta f : aulasAgenda) {
             Aula existente = f.getAula();
-            if (temConflitoDias(aula.getDiasSemana(), existente.getDiasSemana())) {
-                if (horariosConflitam(aula.getHoraInicio(), aula.getHoraFim(), existente.getHoraInicio(), existente.getHoraFim())) {
-                    throw new Exception("Conflito de horário com uma aula já adicionada à agenda.");
-                }
+            if (existeConflito(aula, existente)) {
+                throw new Exception("Conflito de horário com uma aula já adicionada à agenda.");
             }
         }
         // Adiciona a aula à agenda
@@ -136,24 +161,44 @@ public class AulaService {
         frequentaRepository.delete(frequenta);
     }
 
-    // Helper: verifica se dois conjuntos de dias possuem interseção
-    private boolean temConflitoDias(String dias1, String dias2) {
-        String[] arrayDias1 = dias1.split(",");
-        String[] arrayDias2 = dias2.split(",");
-        for (String d1 : arrayDias1) {
-            for (String d2 : arrayDias2) {
-                if (d1.trim().equalsIgnoreCase(d2.trim())) {
-                    return true;
-                }
-            }
+    // Helper: Verifica se há conflito entre os horários de duas aulas para os dias em comum
+    private boolean existeConflito(Aula a1, Aula a2) {
+        // Segunda-feira
+        if (a1.isSeg() && a2.isSeg() && horariosConflitam(a1.getHoraInicioSeg(), a1.getHoraFimSeg(), a2.getHoraInicioSeg(), a2.getHoraFimSeg())) {
+            return true;
+        }
+        // Terça-feira
+        if (a1.isTer() && a2.isTer() && horariosConflitam(a1.getHoraInicioTer(), a1.getHoraFimTer(), a2.getHoraInicioTer(), a2.getHoraFimTer())) {
+            return true;
+        }
+        // Quarta-feira
+        if (a1.isQua() && a2.isQua() && horariosConflitam(a1.getHoraInicioQua(), a1.getHoraFimQua(), a2.getHoraInicioQua(), a2.getHoraFimQua())) {
+            return true;
+        }
+        // Quinta-feira
+        if (a1.isQui() && a2.isQui() && horariosConflitam(a1.getHoraInicioQui(), a1.getHoraFimQui(), a2.getHoraInicioQui(), a2.getHoraFimQui())) {
+            return true;
+        }
+        // Sexta-feira
+        if (a1.isSex() && a2.isSex() && horariosConflitam(a1.getHoraInicioSex(), a1.getHoraFimSex(), a2.getHoraInicioSex(), a2.getHoraFimSex())) {
+            return true;
+        }
+        // Sábado
+        if (a1.isSab() && a2.isSab() && horariosConflitam(a1.getHoraInicioSab(), a1.getHoraFimSab(), a2.getHoraInicioSab(), a2.getHoraFimSab())) {
+            return true;
+        }
+        // Domingo
+        if (a1.isDom() && a2.isDom() && horariosConflitam(a1.getHoraInicioDom(), a1.getHoraFimDom(), a2.getHoraInicioDom(), a2.getHoraFimDom())) {
+            return true;
         }
         return false;
     }
 
-    // Helper: verifica se os horários conflitam
-// Helper: verifica se os horários conflitam (usando java.sql.Time)
+    // Helper: Verifica se dois intervalos de horário conflitam (usando java.sql.Time)
     private boolean horariosConflitam(Time inicio1, Time fim1, Time inicio2, Time fim2) {
+        if (inicio1 == null || fim1 == null || inicio2 == null || fim2 == null) {
+            return false;
+        }
         return inicio1.before(fim2) && fim1.after(inicio2);
     }
-
 }

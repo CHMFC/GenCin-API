@@ -18,6 +18,10 @@ public class AulaController {
     }
 
     // Endpoint para professor criar aula
+    // O corpo da requisição deve conter os campos conforme a entidade:
+    // codAula, nomeAula, seg, horaInicioSeg, horaFimSeg, ter, horaInicioTer, horaFimTer,
+    // qua, horaInicioQua, horaFimQua, qui, horaInicioQui, horaFimQui, sex, horaInicioSex, horaFimSex,
+    // sab, horaInicioSab, horaFimSab, dom, horaInicioDom, horaFimDom
     @PostMapping("/criar")
     public ResponseEntity<?> criarAula(@RequestParam String keySessao, @RequestBody Aula aula) {
         try {
@@ -28,7 +32,7 @@ public class AulaController {
         }
     }
 
-    // Endpoint para professor editar aula
+    // Endpoint para professor editar aula (somente se for o dono)
     @PutMapping("/editar")
     public ResponseEntity<?> editarAula(@RequestParam String keySessao,
                                         @RequestParam UUID aulaId,
