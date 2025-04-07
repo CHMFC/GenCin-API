@@ -93,10 +93,6 @@ public class AulaService {
         aula.setHoraInicioSab(updatedAula.getHoraInicioSab());
         aula.setHoraFimSab(updatedAula.getHoraFimSab());
 
-        aula.setDom(updatedAula.isDom());
-        aula.setHoraInicioDom(updatedAula.getHoraInicioDom());
-        aula.setHoraFimDom(updatedAula.getHoraFimDom());
-
         return aulaRepository.save(aula);
     }
 
@@ -185,10 +181,6 @@ public class AulaService {
         }
         // Sábado
         if (a1.isSab() && a2.isSab() && horariosConflitam(a1.getHoraInicioSab(), a1.getHoraFimSab(), a2.getHoraInicioSab(), a2.getHoraFimSab())) {
-            return true;
-        }
-        // Domingo
-        if (a1.isDom() && a2.isDom() && horariosConflitam(a1.getHoraInicioDom(), a1.getHoraFimDom(), a2.getHoraInicioDom(), a2.getHoraFimDom())) {
             return true;
         }
         return false;
