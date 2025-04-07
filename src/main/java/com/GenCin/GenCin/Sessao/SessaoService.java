@@ -1,6 +1,5 @@
 package com.GenCin.GenCin.Sessao;
 
-import com.GenCin.GenCin.Security.TokenService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.GenCin.GenCin.Gmail.SimpleEmailSender;
@@ -14,13 +13,11 @@ import java.util.UUID;
 public class SessaoService {
 
     private final SessaoRepository sessaoRepository;
-    private final TokenService tokenService;
 
     SimpleEmailSender simpleEmailSender;
 
-    public SessaoService(SessaoRepository sessaoRepository, TokenService tokenService) {
+    public SessaoService(SessaoRepository sessaoRepository) {
         this.sessaoRepository = sessaoRepository;
-        this.tokenService = tokenService;
     }
 
     /**
@@ -65,24 +62,14 @@ public class SessaoService {
 
         // Gera uma nova chave de sessão (para identificar a sessão)
         String chaveSessao = UUID.randomUUID().toString();
-        // Gera o token JWT usando o TokenService (com o id do usuário como subject)
-        String chaveToken = tokenService.generateToken(idUsuario);
         UUID idSessao = UUID.randomUUID();
 
         // Gera um código de verificação a partir do token (opcional, apenas exemplo)
         // Cuidado: tokens JWT possuem pontos, então se preferir um código separado, gere-o de forma independente.
 
         String cod_verify = "";
-        int loop = 0;
-        while(loop < 1){
-            cod_verify = chaveToken.substring(chaveToken.length() - 8, chaveToken.length() - 2).toUpperCase();
-            System.out.println("cod: " + cod_verify);
-            if (cod_verify.contains("_") || cod_verify.contains(".")) {
-                System.out.println("Voltou");
-            } else {
-                loop++;
-            }
-        }
+
+        cod_verify = chaveSessao.substring(chaveSessao.length() - 5, chaveSessao.length()).toUpperCase();
 
         System.out.println("Cod_verify: " + cod_verify);
         try {
@@ -92,8 +79,8 @@ public class SessaoService {
         }
 
         // Registra a nova sessão no banco de dados
-        sessaoRepository.registrarSessao(idSessao, idUsuario, chaveSessao, chaveToken);
-        return chaveToken;
+        sessaoRepository.registrarSessao(idSessao, idUsuario, chaveSessao, chaveSessao);
+        return chaveSessao;
     }
 
     public boolean validarBearerToken(String chaveSessao, String bearerToken) {

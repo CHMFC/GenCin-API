@@ -20,7 +20,6 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/usuario/getinfo").authenticated()
                         .anyRequest().permitAll())
                 // Adiciona nosso filtro antes do filtro de autenticação padrão
                 .addFilterBefore(bearerTokenFilter, UsernamePasswordAuthenticationFilter.class);

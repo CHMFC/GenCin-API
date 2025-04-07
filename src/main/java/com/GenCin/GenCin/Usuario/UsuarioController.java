@@ -93,8 +93,6 @@ public class UsuarioController {
     @GetMapping("/getinfo")
     public ResponseEntity<?> getInfo(@RequestParam String keySessao) {
         try {
-            // Verifique se a sessão é válida
-            System.out.println("Chegou aqui");
             var idUser = sessaoService.verificarSessao(keySessao);
 
             if (idUser.isPresent()) {
