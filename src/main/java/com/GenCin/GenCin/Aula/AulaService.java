@@ -332,4 +332,13 @@ public class AulaService {
         }
         return inicio1.before(fim2) && fim1.after(inicio2);
     }
+
+    public AulaDTO buscarAulaPorIdDTO(UUID aulaId) throws Exception {
+        Aula aula = aulaRepository.findById(aulaId)
+                .orElseThrow(() -> new Exception("Aula não encontrada."));
+
+        // Converte a entidade Aula para AulaDTO usando seu método toDTO (ou crie manualmente)
+        return toDTO(aula);
+    }
+
 }
