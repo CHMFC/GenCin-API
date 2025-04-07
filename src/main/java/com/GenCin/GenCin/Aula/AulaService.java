@@ -10,6 +10,7 @@ import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class AulaService {
@@ -193,4 +194,39 @@ public class AulaService {
         }
         return inicio1.before(fim2) && fim1.after(inicio2);
     }
+
+    @Transactional(readOnly = true)
+    public List<Aula> getMinhasTurmas(String keySessao) throws Exception {
+        Optional<UUID> idUserOpt = sessaoService.verificarSessao(keySessao);
+        if (idUserOpt.isEmpty()) {
+            throw new Exception("Sessão inválida.");
+        }
+        UUID idUser = idUserOpt.get();
+
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUser);
+        if (usuarioOpt.isEmpty()) {
+            throw new Exception("Usuário não encontrado.");
+        }
+
+        Usuario usuario = usuarioOpt.get();
+        List<Aula> aulas;
+
+        if ("ALUNO".equalsIgnoreCase(usuario.getTipo())) {
+            // Se for aluno, pega as aulas que ele frequenta (usando o FrequentaRepository)
+            // Supondo que o método findByAluno retorne uma lista de Frequenta e que cada Frequenta possua a referência para a Aula:
+            aulas = frequentaRepository.findByAluno(usuario)
+                    .stream()
+                    .map(Frequenta::getAula)
+                    .collect(Collectors.toList());
+        } else if ("PROFESSOR".equalsIgnoreCase(usuario.getTipo())) {
+            // Se for professor, pega as aulas cujo professor é ele.
+            // Supondo que o Usuario possua um método getProfessor() que retorna o objeto Professor
+            aulas = aulaRepository.findByProfessor(usuario.getProfessor());
+        } else {
+            throw new Exception("Tipo de usuário não reconhecido.");
+        }
+
+        return aulas;
+    }
+
 }

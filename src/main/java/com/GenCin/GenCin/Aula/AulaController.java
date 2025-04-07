@@ -17,11 +17,6 @@ public class AulaController {
         this.aulaService = aulaService;
     }
 
-    // Endpoint para professor criar aula
-    // O corpo da requisição deve conter os campos conforme a entidade:
-    // codAula, nomeAula, seg, horaInicioSeg, horaFimSeg, ter, horaInicioTer, horaFimTer,
-    // qua, horaInicioQua, horaFimQua, qui, horaInicioQui, horaFimQui, sex, horaInicioSex, horaFimSex,
-    // sab, horaInicioSab, horaFimSab, dom, horaInicioDom, horaFimDom
     @PostMapping("/criar")
     public ResponseEntity<?> criarAula(@RequestParam String keySessao, @RequestBody Aula aula) {
         try {
@@ -77,4 +72,15 @@ public class AulaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @GetMapping("/minhas")
+    public ResponseEntity<?> getMinhasTurmas(@RequestParam String keySessao) {
+        try {
+            List<Aula> aulas = aulaService.getMinhasTurmas(keySessao);
+            return ResponseEntity.ok(aulas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 }
