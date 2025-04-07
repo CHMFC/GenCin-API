@@ -26,8 +26,9 @@ public class Aula {
     @Column(name = "nome_aula", nullable = false)
     private String nomeAula;
 
-    @Column(name = "dia_aula", nullable = false)
-    private String diaAula;
+    // Armazena os dias da semana em que a aula ocorre (ex.: "SEG,TER,QUI")
+    @Column(name = "dias_semana", nullable = false)
+    private String diasSemana;
 
     @ManyToOne
     @JoinColumn(name = "id_professor", referencedColumnName = "id", nullable = false)
