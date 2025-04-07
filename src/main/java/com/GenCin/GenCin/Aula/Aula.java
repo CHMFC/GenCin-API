@@ -105,15 +105,4 @@ public class Aula {
     @Column(name = "hora_fim_sab")
     private Time horaFimSab;
 
-    // Se existir coluna para domingo (dom)
-    @Column(name = "dom", nullable = false)
-    private boolean dom;
-
-    @JsonFormat(pattern = "HH:mm:ss", timezone = "UTC")
-    @Column(name = "hora_inicio_dom")
-    private Time horaInicioDom;
-
-    @JsonFormat(pattern = "HH:mm:ss", timezone = "UTC")
-    @Column(name = "hora_fim_dom")
-    private Time horaFimDom;
 }
