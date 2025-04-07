@@ -1,6 +1,8 @@
 package com.GenCin.GenCin.Aula;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.GenCin.GenCin.Professor.Professor;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,6 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Aula {
 
     @Id
@@ -104,5 +107,4 @@ public class Aula {
     @JsonFormat(pattern = "HH:mm:ss", timezone = "UTC")
     @Column(name = "hora_fim_sab")
     private Time horaFimSab;
-
 }
