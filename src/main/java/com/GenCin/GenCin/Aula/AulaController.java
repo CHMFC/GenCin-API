@@ -1,5 +1,6 @@
 package com.GenCin.GenCin.Aula;
 
+import com.GenCin.GenCin.Aula.DTO.AulaDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +19,10 @@ public class AulaController {
     }
 
     @PostMapping("/criar")
-    public ResponseEntity<?> criarAula(@RequestParam String keySessao, @RequestBody Aula aula) {
+    public ResponseEntity<?> criarAula(@RequestParam String keySessao, @RequestBody AulaDTO aulaDTO) {
         try {
-            Aula novaAula = aulaService.criarAula(keySessao, aula);
+            // Agora, o service retorna AulaDTO
+            AulaDTO novaAula = aulaService.criarAula(keySessao, aulaDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(novaAula);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -31,27 +33,27 @@ public class AulaController {
     @PutMapping("/editar")
     public ResponseEntity<?> editarAula(@RequestParam String keySessao,
                                         @RequestParam UUID aulaId,
-                                        @RequestBody Aula aula) {
+                                        @RequestBody AulaDTO aulaDTO) {
         try {
-            Aula aulaAtualizada = aulaService.editarAula(keySessao, aulaId, aula);
+            AulaDTO aulaAtualizada = aulaService.editarAula(keySessao, aulaId, aulaDTO);
             return ResponseEntity.ok(aulaAtualizada);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    // Endpoint para buscar aulas pelo código
+    // Endpoint para buscar aulas pelo código (retornando lista de DTOs)
     @GetMapping("/buscar")
     public ResponseEntity<?> buscarAula(@RequestParam String codAula) {
         try {
-            List<Aula> aulas = aulaService.buscarAulaPorCodigo(codAula);
+            List<AulaDTO> aulas = aulaService.buscarAulaPorCodigoDTO(codAula);
             return ResponseEntity.ok(aulas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    // Endpoint para aluno adicionar aula à agenda
+    // Endpoint para aluno adicionar aula à agenda (sem mexer no DTO, pois não retornamos a aula)
     @PostMapping("/adicionarAgenda")
     public ResponseEntity<?> adicionarAulaAgenda(@RequestParam String keySessao, @RequestParam UUID aulaId) {
         try {
@@ -72,7 +74,4 @@ public class AulaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-
-
-
 }
