@@ -73,14 +73,6 @@ public class AulaController {
         }
     }
 
-    @GetMapping("/minhas")
-    public ResponseEntity<?> getMinhasTurmas(@RequestParam String keySessao) {
-        try {
-            List<Aula> aulas = aulaService.getMinhasTurmas(keySessao);
-            return ResponseEntity.ok(aulas);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
+
 
 }
