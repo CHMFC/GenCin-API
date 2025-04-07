@@ -1,5 +1,6 @@
 package com.GenCin.GenCin.Aula;
 
+import com.GenCin.GenCin.Aula.DTO.AulaDTO;
 import com.GenCin.GenCin.Sessao.SessaoService;
 import com.GenCin.GenCin.Usuario.Usuario;
 import com.GenCin.GenCin.Usuario.UsuarioRepository;
@@ -20,89 +21,96 @@ public class AulaService {
     private final UsuarioRepository usuarioRepository;
     private final SessaoService sessaoService;
 
-    public AulaService(AulaRepository aulaRepository, FrequentaRepository frequentaRepository,
-                       UsuarioRepository usuarioRepository, SessaoService sessaoService) {
+    public AulaService(AulaRepository aulaRepository,
+                       FrequentaRepository frequentaRepository,
+                       UsuarioRepository usuarioRepository,
+                       SessaoService sessaoService) {
         this.aulaRepository = aulaRepository;
         this.frequentaRepository = frequentaRepository;
         this.usuarioRepository = usuarioRepository;
         this.sessaoService = sessaoService;
     }
 
-    // Criação de aula pelo professor
+    // ==================
+    //   CRIAR AULA
+    // ==================
     @Transactional
-    public Aula criarAula(String keySessao, Aula aula) throws Exception {
+    public AulaDTO criarAula(String keySessao, AulaDTO aulaDTO) throws Exception {
         Optional<UUID> idUserOpt = sessaoService.verificarSessao(keySessao);
         if (idUserOpt.isEmpty()) {
             throw new Exception("Sessão inválida.");
         }
         UUID idUser = idUserOpt.get();
+
+        // Verifica se é professor
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUser);
         if (usuarioOpt.isEmpty() || !"PROFESSOR".equalsIgnoreCase(usuarioOpt.get().getTipo())) {
             throw new Exception("Usuário não autorizado. Somente professores podem criar aulas.");
         }
-        Usuario professor = usuarioOpt.get();
-        // Define o professor da aula a partir do objeto associado ao usuário
-        aula.setProfessor(professor.getProfessor());
-        return aulaRepository.save(aula);
+
+        // Converte o DTO para uma nova entidade "Aula"
+        Aula aulaEntity = toEntity(aulaDTO, new Aula());
+        // Vincula o professor
+        aulaEntity.setProfessor(usuarioOpt.get().getProfessor());
+
+        // Salva no banco
+        Aula aulaSalva = aulaRepository.save(aulaEntity);
+
+        // Converte de volta para DTO e retorna
+        return toDTO(aulaSalva);
     }
 
-    // Edição de aula pelo professor (somente se for o dono)
+    // ==================
+    //   EDITAR AULA
+    // ==================
     @Transactional
-    public Aula editarAula(String keySessao, UUID aulaId, Aula updatedAula) throws Exception {
+    public AulaDTO editarAula(String keySessao, UUID aulaId, AulaDTO updatedDTO) throws Exception {
         Optional<UUID> idUserOpt = sessaoService.verificarSessao(keySessao);
         if (idUserOpt.isEmpty()) {
             throw new Exception("Sessão inválida.");
         }
         UUID idUser = idUserOpt.get();
+
+        // Verifica se é professor
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUser);
         if (usuarioOpt.isEmpty() || !"PROFESSOR".equalsIgnoreCase(usuarioOpt.get().getTipo())) {
             throw new Exception("Usuário não autorizado. Somente professores podem editar aulas.");
         }
-        Usuario professor = usuarioOpt.get();
-        Aula aula = aulaRepository.findById(aulaId)
+
+        // Busca a aula existente
+        Aula aulaExistente = aulaRepository.findById(aulaId)
                 .orElseThrow(() -> new Exception("Aula não encontrada."));
+
         // Verifica se o professor é o dono da aula
-        if (!aula.getProfessor().getId().equals(professor.getProfessor().getId())) {
+        if (!aulaExistente.getProfessor().getId().equals(usuarioOpt.get().getProfessor().getId())) {
             throw new Exception("Você não pode editar uma aula que não é sua.");
         }
-        // Atualiza os campos da aula
-        aula.setCodAula(updatedAula.getCodAula());
-        aula.setNomeAula(updatedAula.getNomeAula());
 
-        // Atualiza os dias e horários
-        aula.setSeg(updatedAula.isSeg());
-        aula.setHoraInicioSeg(updatedAula.getHoraInicioSeg());
-        aula.setHoraFimSeg(updatedAula.getHoraFimSeg());
+        // Converte o DTO para a entidade, atualizando "aulaExistente"
+        Aula aulaAtualizada = toEntity(updatedDTO, aulaExistente);
+        // Professor não muda, então deixamos o que já está setado
 
-        aula.setTer(updatedAula.isTer());
-        aula.setHoraInicioTer(updatedAula.getHoraInicioTer());
-        aula.setHoraFimTer(updatedAula.getHoraFimTer());
+        // Salva no banco
+        Aula aulaSalva = aulaRepository.save(aulaAtualizada);
 
-        aula.setQua(updatedAula.isQua());
-        aula.setHoraInicioQua(updatedAula.getHoraInicioQua());
-        aula.setHoraFimQua(updatedAula.getHoraFimQua());
-
-        aula.setQui(updatedAula.isQui());
-        aula.setHoraInicioQui(updatedAula.getHoraInicioQui());
-        aula.setHoraFimQui(updatedAula.getHoraFimQui());
-
-        aula.setSex(updatedAula.isSex());
-        aula.setHoraInicioSex(updatedAula.getHoraInicioSex());
-        aula.setHoraFimSex(updatedAula.getHoraFimSex());
-
-        aula.setSab(updatedAula.isSab());
-        aula.setHoraInicioSab(updatedAula.getHoraInicioSab());
-        aula.setHoraFimSab(updatedAula.getHoraFimSab());
-
-        return aulaRepository.save(aula);
+        // Retorna um DTO com as informações atualizadas
+        return toDTO(aulaSalva);
     }
 
-    // Buscar aulas por cod_aula (retorna todas as aulas com o mesmo código)
-    public List<Aula> buscarAulaPorCodigo(String codAula) {
-        return aulaRepository.findByCodAula(codAula);
+    // ============================
+    //   BUSCAR AULAS POR CÓDIGO
+    // ============================
+    public List<AulaDTO> buscarAulaPorCodigoDTO(String codAula) {
+        List<Aula> aulas = aulaRepository.findByCodAula(codAula);
+        // Converte cada Aula para AulaDTO
+        return aulas.stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
-    // Adicionar aula à agenda do aluno
+    // =====================
+    //   ADICIONAR AGENDA
+    // =====================
     @Transactional
     public void adicionarAulaAgenda(String keySessao, UUID aulaId) throws Exception {
         Optional<UUID> idUserOpt = sessaoService.verificarSessao(keySessao);
@@ -110,25 +118,32 @@ public class AulaService {
             throw new Exception("Sessão inválida.");
         }
         UUID idUser = idUserOpt.get();
+
+        // Verifica se é aluno
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUser);
         if (usuarioOpt.isEmpty() || !"ALUNO".equalsIgnoreCase(usuarioOpt.get().getTipo())) {
             throw new Exception("Usuário não autorizado. Somente alunos podem adicionar aulas à agenda.");
         }
         Usuario aluno = usuarioOpt.get();
+
+        // Busca a aula
         Aula aula = aulaRepository.findById(aulaId)
                 .orElseThrow(() -> new Exception("Aula não encontrada."));
+
         // Verifica se a aula já está na agenda
         if (frequentaRepository.findByAlunoAndAula(aluno, aula).isPresent()) {
             throw new Exception("Aula já adicionada à agenda.");
         }
+
         // Verifica conflitos de horário entre a aula a ser adicionada e as aulas já na agenda
-        List<Frequenta> aulasAgenda = frequentaRepository.findByAluno(aluno);
-        for (Frequenta f : aulasAgenda) {
+        var aulasAgenda = frequentaRepository.findByAluno(aluno);
+        for (var f : aulasAgenda) {
             Aula existente = f.getAula();
             if (existeConflito(aula, existente)) {
                 throw new Exception("Conflito de horário com uma aula já adicionada à agenda.");
             }
         }
+
         // Adiciona a aula à agenda
         Frequenta frequenta = Frequenta.builder()
                 .id(new FrequentaId(aluno.getId(), aula.getId()))
@@ -138,7 +153,9 @@ public class AulaService {
         frequentaRepository.save(frequenta);
     }
 
-    // Remover aula da agenda do aluno
+    // ======================
+    //   REMOVER DA AGENDA
+    // ======================
     @Transactional
     public void removerAulaAgenda(String keySessao, UUID aulaId) throws Exception {
         Optional<UUID> idUserOpt = sessaoService.verificarSessao(keySessao);
@@ -146,19 +163,141 @@ public class AulaService {
             throw new Exception("Sessão inválida.");
         }
         UUID idUser = idUserOpt.get();
+
+        // Verifica se é aluno
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUser);
         if (usuarioOpt.isEmpty() || !"ALUNO".equalsIgnoreCase(usuarioOpt.get().getTipo())) {
             throw new Exception("Usuário não autorizado. Somente alunos podem remover aulas da agenda.");
         }
         Usuario aluno = usuarioOpt.get();
+
+        // Busca a aula
         Aula aula = aulaRepository.findById(aulaId)
                 .orElseThrow(() -> new Exception("Aula não encontrada."));
+
+        // Verifica se a aula está na agenda
         Frequenta frequenta = frequentaRepository.findByAlunoAndAula(aluno, aula)
                 .orElseThrow(() -> new Exception("Aula não está na agenda."));
         frequentaRepository.delete(frequenta);
     }
 
-    // Helper: Verifica se há conflito entre os horários de duas aulas para os dias em comum
+    // ==============================
+    //   GET MINHAS TURMAS (Agenda)
+    // ==============================
+    @Transactional(readOnly = true)
+    public List<Aula> getMinhasTurmas(String keySessao) throws Exception {
+        Optional<UUID> idUserOpt = sessaoService.verificarSessao(keySessao);
+        if (idUserOpt.isEmpty()) {
+            throw new Exception("Sessão inválida.");
+        }
+        UUID idUser = idUserOpt.get();
+
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUser);
+        if (usuarioOpt.isEmpty()) {
+            throw new Exception("Usuário não encontrado.");
+        }
+
+        Usuario usuario = usuarioOpt.get();
+        List<Aula> aulas;
+
+        if ("ALUNO".equalsIgnoreCase(usuario.getTipo())) {
+            // Se for aluno, pega as aulas que ele frequenta
+            aulas = frequentaRepository.findByAluno(usuario)
+                    .stream()
+                    .map(Frequenta::getAula)
+                    .collect(Collectors.toList());
+        } else if ("PROFESSOR".equalsIgnoreCase(usuario.getTipo())) {
+            // Se for professor, pega as aulas criadas por ele
+            aulas = aulaRepository.findByProfessor(usuario.getProfessor());
+        } else {
+            throw new Exception("Tipo de usuário não reconhecido.");
+        }
+
+        return aulas;
+    }
+
+    // ==============================
+    //   MÉTODOS DE CONVERSÃO
+    // ==============================
+
+    // Converte uma entidade Aula -> AulaDTO
+    private AulaDTO toDTO(Aula aula) {
+        AulaDTO dto = new AulaDTO();
+        dto.setId(aula.getId());
+        dto.setCodAula(aula.getCodAula());
+        dto.setNomeAula(aula.getNomeAula());
+
+        // Seta apenas nome e email do professor
+        if (aula.getProfessor() != null) {
+            dto.setNomeProfessor(aula.getProfessor().getNome());
+            dto.setEmailProfessor(aula.getProfessor().getEmail());
+        }
+
+        // Copiar os campos de dia e horário (caso queira expor):
+        dto.setSeg(aula.isSeg());
+        dto.setHoraInicioSeg(aula.getHoraInicioSeg());
+        dto.setHoraFimSeg(aula.getHoraFimSeg());
+
+        dto.setTer(aula.isTer());
+        dto.setHoraInicioTer(aula.getHoraInicioTer());
+        dto.setHoraFimTer(aula.getHoraFimTer());
+
+        dto.setQua(aula.isQua());
+        dto.setHoraInicioQua(aula.getHoraInicioQua());
+        dto.setHoraFimQua(aula.getHoraFimQua());
+
+        dto.setQui(aula.isQui());
+        dto.setHoraInicioQui(aula.getHoraInicioQui());
+        dto.setHoraFimQui(aula.getHoraFimQui());
+
+        dto.setSex(aula.isSex());
+        dto.setHoraInicioSex(aula.getHoraInicioSex());
+        dto.setHoraFimSex(aula.getHoraFimSex());
+
+        dto.setSab(aula.isSab());
+        dto.setHoraInicioSab(aula.getHoraInicioSab());
+        dto.setHoraFimSab(aula.getHoraFimSab());
+
+        return dto;
+    }
+
+    // Converte um DTO -> Entidade Aula (para criar ou editar)
+    // Se for edição, passamos a aula existente como `aula`, e atualizamos campos.
+    private Aula toEntity(AulaDTO dto, Aula aula) {
+        aula.setCodAula(dto.getCodAula());
+        aula.setNomeAula(dto.getNomeAula());
+        // Não definimos professor aqui, pois isso é feito dentro de criarAula/editarAula
+
+        aula.setSeg(dto.isSeg());
+        aula.setHoraInicioSeg(dto.getHoraInicioSeg());
+        aula.setHoraFimSeg(dto.getHoraFimSeg());
+
+        aula.setTer(dto.isTer());
+        aula.setHoraInicioTer(dto.getHoraInicioTer());
+        aula.setHoraFimTer(dto.getHoraFimTer());
+
+        aula.setQua(dto.isQua());
+        aula.setHoraInicioQua(dto.getHoraInicioQua());
+        aula.setHoraFimQua(dto.getHoraFimQua());
+
+        aula.setQui(dto.isQui());
+        aula.setHoraInicioQui(dto.getHoraInicioQui());
+        aula.setHoraFimQui(dto.getHoraFimQui());
+
+        aula.setSex(dto.isSex());
+        aula.setHoraInicioSex(dto.getHoraInicioSex());
+        aula.setHoraFimSex(dto.getHoraFimSex());
+
+        aula.setSab(dto.isSab());
+        aula.setHoraInicioSab(dto.getHoraInicioSab());
+        aula.setHoraFimSab(dto.getHoraFimSab());
+
+        return aula;
+    }
+
+    // =======================
+    //   CONFLITOS DE HORÁRIO
+    // =======================
     private boolean existeConflito(Aula a1, Aula a2) {
         // Segunda-feira
         if (a1.isSeg() && a2.isSeg() && horariosConflitam(a1.getHoraInicioSeg(), a1.getHoraFimSeg(), a2.getHoraInicioSeg(), a2.getHoraFimSeg())) {
@@ -187,46 +326,10 @@ public class AulaService {
         return false;
     }
 
-    // Helper: Verifica se dois intervalos de horário conflitam (usando java.sql.Time)
     private boolean horariosConflitam(Time inicio1, Time fim1, Time inicio2, Time fim2) {
         if (inicio1 == null || fim1 == null || inicio2 == null || fim2 == null) {
             return false;
         }
         return inicio1.before(fim2) && fim1.after(inicio2);
     }
-
-    @Transactional(readOnly = true)
-    public List<Aula> getMinhasTurmas(String keySessao) throws Exception {
-        Optional<UUID> idUserOpt = sessaoService.verificarSessao(keySessao);
-        if (idUserOpt.isEmpty()) {
-            throw new Exception("Sessão inválida.");
-        }
-        UUID idUser = idUserOpt.get();
-
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUser);
-        if (usuarioOpt.isEmpty()) {
-            throw new Exception("Usuário não encontrado.");
-        }
-
-        Usuario usuario = usuarioOpt.get();
-        List<Aula> aulas;
-
-        if ("ALUNO".equalsIgnoreCase(usuario.getTipo())) {
-            // Se for aluno, pega as aulas que ele frequenta (usando o FrequentaRepository)
-            // Supondo que o método findByAluno retorne uma lista de Frequenta e que cada Frequenta possua a referência para a Aula:
-            aulas = frequentaRepository.findByAluno(usuario)
-                    .stream()
-                    .map(Frequenta::getAula)
-                    .collect(Collectors.toList());
-        } else if ("PROFESSOR".equalsIgnoreCase(usuario.getTipo())) {
-            // Se for professor, pega as aulas cujo professor é ele.
-            // Supondo que o Usuario possua um método getProfessor() que retorna o objeto Professor
-            aulas = aulaRepository.findByProfessor(usuario.getProfessor());
-        } else {
-            throw new Exception("Tipo de usuário não reconhecido.");
-        }
-
-        return aulas;
-    }
-
 }
