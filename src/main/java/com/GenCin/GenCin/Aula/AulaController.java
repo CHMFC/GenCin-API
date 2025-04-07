@@ -18,6 +18,17 @@ public class AulaController {
         this.aulaService = aulaService;
     }
 
+    @GetMapping("/info")
+    public ResponseEntity<?> getAulaInfo(@RequestParam UUID aulaId) {
+        try {
+            // Chama o service para buscar a aula por ID
+            AulaDTO aulaDTO = aulaService.buscarAulaPorIdDTO(aulaId);
+            return ResponseEntity.ok(aulaDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/criar")
     public ResponseEntity<?> criarAula(@RequestParam String keySessao, @RequestBody AulaDTO aulaDTO) {
         try {
