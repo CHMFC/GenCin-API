@@ -31,8 +31,8 @@ public class UsuarioController {
             if (idUser.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha inválidos.");
             }
-
-            String keySessao = sessaoService.iniciarSessao(idUser.get());
+            
+            String keySessao = sessaoService.iniciarSessao(idUser.get(), user);
             return ResponseEntity.ok(keySessao);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Parâmetro inválido: " + e.getMessage());
@@ -93,7 +93,6 @@ public class UsuarioController {
     @GetMapping("/getinfo")
     public ResponseEntity<?> getInfo(@RequestParam String keySessao) {
         try {
-            // Verifique se a sessão é válida
             var idUser = sessaoService.verificarSessao(keySessao);
 
             if (idUser.isPresent()) {
